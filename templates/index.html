@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Asignación de Cursos a Aulas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        input[type="number"] {
+            width: 60px;  /* Tamaño ajustado para las capacidades */
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: auto;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .divider {
+            border-right: 1px solid #ddd;
+            margin: 0 20px;
+            height: calc(100% - 20px);
+        }
+    </style>
+    <script>
+        function addAula() {
+            var table = document.getElementById("aulas-table");
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            cell1.innerHTML = '<input type="text" name="aula_nombre[]" value="Nueva Aula">';
+            cell2.innerHTML = '<input type="number" name="aula_capacidad[]" value="0">';
+        }
+
+        function addCurso() {
+            var table = document.getElementById("cursos-table");
+            var row = table.insertRow(-1);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            cell1.innerHTML = '<input type="text" name="curso_nombre[]" value="Nuevo Curso">';
+            cell2.innerHTML = '<input type="number" name="curso_alumnos[]" value="0">';
+        }
+    </script>
+</head>
+<body>
+<h1>Asignación de Cursos a Aulas</h1>
+<div class="container">
+    <form method="POST">
+        <div class="table-container">
+            <table id="aulas-table">
+                <tr>
+                    <th>Aula</th>
+                    <th>Capacidad</th>
+                </tr>
+                {% for aula in aulas %}
+                <tr>
+                    <td><input type="text" name="aula_nombre[]" value="{{ aula.nombre }}"></td>
+                    <td><input type="number" name="aula_capacidad[]" value="{{ aula.capacidad }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <div class="divider"></div>
+
+            <table id="cursos-table">
+                <tr>
+                    <th>Curso</th>
+                    <th>Número de Alumnos</th>
+                </tr>
+                {% for curso in cursos %}
+                <tr>
+                    <td><input type="text" name="curso_nombre[]" value="{{ curso.nombre }}"></td>
+                    <td><input type="number" name="curso_alumnos[]" value="{{ curso.alumnos }}"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div>
+        
+        <button type="button" onclick="addAula()">Agregar Aula</button>
+        <button type="button" onclick="addCurso()">Agregar Curso</button>
+        </div>
+        
+    <!--<button type="submit">Ejecutar Asignación</button> -->
+
+
+
+    
+    <title>Fijar aulas para cursos</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const aulaSelect = document.getElementById("aula_seleccion");
+            const cursoSelect = document.getElementById("curso_seleccion");
+            const addButton = document.getElementById("agregar_button");
+            const assignmentList = document.getElementById("aulas_fijas");
+
+            addButton.addEventListener("click", function() {
+                const selectedAula = aulaSelect.value;
+                const selectedCurso = cursoSelect.value;
+                if (selectedAula && selectedCurso) {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${selectedCurso} | ${selectedAula}`;
+                    listItem.addEventListener("click", function() {
+                        assignmentList.removeChild(listItem);
+                    });
+
+                    assignmentList.appendChild(listItem);
+
+                    // Clear the selected values
+                    aulaSelect.value = "";
+                    cursoSelect.value = "";
+                }
+              
+            });
+        });
+
+        function updatePostFixed() {
+            // Get the container element
+            var aulas_fijas = document.getElementById("aulas_fijas");
+
+            // Loop through child elements
+            var long = aulas_fijas.children.length;
+            for (var i = 0; i < long ; i++) {
+                var aula_fija = aulas_fijas.children[i];
+        
+                // Create a new input element for each child element
+                var aulas_fijas_list = document.createElement("input");
+                aulas_fijas_list.setAttribute("type", "hidden");
+                aulas_fijas_list.setAttribute("name", "aulas_fijas[]");
+                aulas_fijas_list.setAttribute("value", aula_fija.textContent);
+        
+                // Append the input element to the container
+                aulas_fijas.appendChild(aulas_fijas_list);
+        }
+    }       
+
+    </script>
+</head>
+<body>
+    <h3>Fijar aulas para cursos</h3>
+    <label for="aula_seleccion">Aula:</label>
+    <select id="aula_seleccion" name="aula_seleccion">
+        <option value="">-</option>
+        {% for aula in aulas %}
+        <option value="{{ aula.nombre }}">{{ aula.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="curso_seleccion">Curso:</label>
+    <select id="curso_seleccion" name="curso_seleccion">
+        <option value="">-</option>
+        {% for curso in cursos %}
+        <option value="{{ curso.nombre }}">{{ curso.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <button type ="button" id="agregar_button">AÑADIR</button>
+
+    <h4>Aulas fijas (click para quitar):</h4>
+    <ul id="aulas_fijas"></ul>
+
+    <button type="submit" onclick = "updatePostFixed()">Ejecutar Asignación</button>
+</form>
+    {% if asignaciones %}
+    <h2>Resultado:</h2>
+    <ul>
+        {% for asignacion in asignaciones %}
+        <li>{{ asignacion }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+</body>
+</html>
