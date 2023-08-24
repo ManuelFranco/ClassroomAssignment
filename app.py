@@ -173,4 +173,4 @@ def index():
     return render_template('index.html', asignaciones=asignaciones, aulas=aulas_iniciales, cursos=cursos_iniciales, aulas_fijas=aulas_fijas)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0')
