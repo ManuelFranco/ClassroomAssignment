@@ -158,7 +158,7 @@ def index():
 
         model.one_room_per_course_constraint = Constraint(model.courses, rule=one_room_per_course_rule)
 
-        SolverFactory('glpk').solve(model)
+        SolverFactory('cplex_direct').solve(model)
 
         asignaciones = []
 
